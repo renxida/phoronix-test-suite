@@ -43,7 +43,7 @@ class linux_perf extends pts_module_interface
 	public static function __run_manager_setup(&$test_run_manager)
 	{
 		// Verify LINUX_PERF is set, `perf` can be found, and is Linux
-		if(pts_env::read('LINUX_PERF') == 0 || !pts_client::executable_in_path('perf') || !phodevi::is_linux())
+		if(pts_env::read('LINUX_PERF') == '' || !pts_client::executable_in_path('perf') || !phodevi::is_linux())
 		{
 			return pts_module::MODULE_UNLOAD; // This module doesn't have anything else to do
 		}
@@ -57,6 +57,7 @@ class linux_perf extends pts_module_interface
 			}
 		}
 		echo PHP_EOL . 'Linux PERF Monitoring Enabled.' . PHP_EOL . PHP_EOL;
+		echo PHP_EOL . 'Linux PERF Monitoring Enabled; Using perf command:' . PHP_EOL . pts_env::read('LINUX_PERF') . PHP_EOL . PHP_EOL;
 
 		// This module won't be too useful if you're not saving the results to see the graphs
 		$test_run_manager->force_results_save();
@@ -71,7 +72,8 @@ class linux_perf extends pts_module_interface
 		// Set the perf command to pass in front of all tests to run
 		self::$tmp_file = tempnam(sys_get_temp_dir(), 'perf');
 		// -d or below is more exhaustive list
-		$test_run_request->exec_binary_prepend = 'perf stat -e branches,branch-misses,cache-misses,cache-references,cycles,instructions,cs,cpu-clock,page-faults,duration_time,task-clock,L1-dcache-load-misses,L1-dcache-loads,L1-dcache-prefetches,L1-icache-load-misses,context-switches,cpu-migrations,branch-loads,branch-load-misses,dTLB-loads,dTLB-load-misses,iTLB-load-misses,iTLB-loads -o ' . self::$tmp_file . ' ';
+		//$test_run_request->exec_binary_prepend = 'perf stat -e branches,branch-misses,cache-misses,cache-references,cycles,instructions,cs,cpu-clock,page-faults,duration_time,task-clock,L1-dcache-load-misses,L1-dcache-loads,L1-dcache-prefetches,L1-icache-load-misses,context-switches,cpu-migrations,branch-loads,branch-load-misses,dTLB-loads,dTLB-load-misses,iTLB-load-misses,iTLB-loads -o ' . self::$tmp_file . ' ';
+		$test_run_request->exec_binary_prepend = pts_env::read('LINUX_PERF');
 	}
 	public static function __post_test_run_success($test_run_request)
 	{

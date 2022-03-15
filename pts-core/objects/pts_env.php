@@ -329,9 +329,9 @@ class pts_env
 			),
 		'LINUX_PERF' => array(
 			'description' => 'This option allows providing additional complementary per-test graphs looking at various Linux perf subsystem metrics such as cache usage, instructions executed, and other metrics. This requires you to have Linux\'s perf user-space utility already installed and performance counter access.',
-			'default' => false,
+			'default' => '',
 			'usage' => array('benchmark'),
-			'value_type' => 'bool',
+			'value_type' => 'string',
 			'module' => 'linux_perf',
 			'advertise_in_phoromatic' => true,
 			),
